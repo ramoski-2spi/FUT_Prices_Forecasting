@@ -17,14 +17,11 @@ from pathlib import Path
 # Import your pipeline functions
 from src.scraper import scrape_players, get_price_history
 from src.features import build_features
-from src.modeling import (
-    train_model,
-    compute_residual_std,
-)
+from src.modeling import (train_model,compute_residual_std,)
 
 from src.config import (
     RAW_DATA_DIR,
-    PROCESSED_DATA_PATH,
+    PROCESSED_DATA_DIR,
     DEFAULT_MODEL_PATH,
     DEFAULT_RESIDUAL_STD_PATH,
 )
@@ -71,13 +68,13 @@ def run_feature_builder():
     print("🛠️ Building feature dataset...")
 
     df = pd.read_csv(RAW_DATA_DIR / "raw_prices.csv")
-    processed_df = build_filters(df)  # your feature builder
+    processed_df = build_features(df)  # your feature builder
 
     # Save processed dataset
-    PROCESSED_DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
-    processed_df.to_csv(PROCESSED_DATA_PATH, index=False)
+    PROCESSED_DATA_DIR.parent.mkdir(parents=True, exist_ok=True)
+    processed_df.to_csv(PROCESSED_DATA_DIR, index=False)
 
-    print(f"✅ Feature dataset saved to {PROCESSED_DATA_PATH}")
+    print(f"✅ Feature dataset saved to {PROCESSED_DATA_DIR}")
 
 
 # ---------------------------------------------------------
@@ -90,7 +87,7 @@ def run_training():
     """
     print("🤖 Training model...")
 
-    df = pd.read_csv(PROCESSED_DATA_PATH)
+    df = pd.read_csv(PROCESSED_DATA_DIR)
     model, splits = train_model(df)
 
     print(f"✅ Model saved to {DEFAULT_MODEL_PATH}")
