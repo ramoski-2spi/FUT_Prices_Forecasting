@@ -4,6 +4,12 @@ import json
 import pandas as pd
 import time
 
+#players for automation
+PLAYERS = {"1154":"bradley-barcola",
+           #"21588":"rayan-cherki",
+           #"23955":"jonathan-david",
+           #"18729":"pirlo"
+           }
 
 def get_price_history(player_id, slug):
     """
@@ -12,7 +18,11 @@ def get_price_history(player_id, slug):
     """
 
     url = f"https://www.futbin.com/26/player/{player_id}/{slug}"
-    headers = {"User-Agent": "Mozilla/5.0"}
+    headers = {"User-Agent": ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                              "AppleWebKit/537.36 (KHTML, like Gecko) "
+                              "Chrome/123.0.0.0 Safari/537.36"),
+                              "Accept-Language": "en-US,en;q=0.9",
+                              "Referer": "https://www.google.com/",}
 
     response = requests.get(url, headers=headers)
 
@@ -60,7 +70,7 @@ def scrape_players(player_dict):
         if df is not None:
             all_data.append(df)
 
-        time.sleep(1.5)  # avoid rate limiting
+        time.sleep(4)  # avoid rate limiting
 
     if not all_data:
         print("No data scraped.")
@@ -71,9 +81,9 @@ def scrape_players(player_dict):
     print("Saved to data/raw/fut_prices_raw.csv")
 
 
-'''if __name__ == "__main__":
-   
-   players = {"254": "lionel-messi",
+if __name__ == "__main__":
+    #players for the analysis dataset
+    players = {"254": "lionel-messi",
            "724": "cristiano-ronaldo-dos-santos-aveiro",
            "41": "florian-wirtz",
            "240": "antonio-rudiger",
@@ -123,4 +133,4 @@ def scrape_players(player_dict):
            "917": "brahim-diaz",
            "17441": "pau-cubarsi-paredes"}
 
-scrape_players(players)'''
+    scrape_players(players)

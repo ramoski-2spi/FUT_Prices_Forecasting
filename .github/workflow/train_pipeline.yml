@@ -1,87 +1,37 @@
-name: Daily Model Training Pipeline
+name: FUT Price Pipeline
 
-# ---------------------------------------------------------
-# 1. Triggers
-# ---------------------------------------------------------
-# We allow two ways to run this workflow:
-# - schedule: runs automatically every day at 3 AM UTC
-# - workflow_dispatch: allows you to trigger it manually from GitHub's UI
 on:
-  schedule:
-    - cron: "0 3 * * *"   # Runs at 03:00 UTC every day
-  workflow_dispatch:      # Manual trigger button
+  workflow_dispatch:       # Allows manual triggering only (no automatic runs)
 
-# ---------------------------------------------------------
-# 2. Permissions
-# ---------------------------------------------------------
-# We need write permissions so the workflow can push updated
-# model files (xgb_model.pkl, residual_std.pkl) back to the repo.
-permissions:
-  contents: write
-
-# ---------------------------------------------------------
-# 3. Job definition
-# ---------------------------------------------------------
 jobs:
-  train-model:
-    runs-on: ubuntu-latest   # GitHub-hosted Linux machine
+  run-pipeline:
+    runs-on: ubuntu-latest # Use GitHub’s latest Ubuntu runner environment
 
     steps:
-
-      # -----------------------------------------------------
-      # Step 1 — Check out your repository
-      # -----------------------------------------------------
-      # This downloads your repo into the GitHub Actions runner
-      # so the workflow can access your code, data, and scripts.
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4   # Pulls your repo code into the runner
 
-      # -----------------------------------------------------
-      # Step 2 — Set up Python
-      # -----------------------------------------------------
-      # Installs the version of Python your project uses.
-      # GitHub Actions machines come with Python, but we want
-      # a clean, predictable version every time.
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.10"    # Installs Python 3.10 on the runner
 
-      # -----------------------------------------------------
-      # Step 3 — Install dependencies
-      # -----------------------------------------------------
-      # Installs everything from your requirements.txt so the
-      # scraper, feature builder, and model training can run.
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          python -m pip install --upgrade pip   # Updates pip
+          pip install -r requirements.txt       # Installs all project packages
 
-      # -----------------------------------------------------
-      # Step 4 — Run the automation script
-      # -----------------------------------------------------
-      # This script will:
-      #   - scrape FUTBIN
-      #   - build the processed dataset
-      #   - train the model
-      #   - compute residual_std
-      #   - save artifacts into data/models/
-      #
-      # You will create automation.py in your repo root.
-      - name: Run training pipeline
+      - name: Run automation pipeline
         run: |
-          python automation.py
+          python automation.py   # Executes your full scraping + training pipeline
 
-      # -----------------------------------------------------
-      # Step 5 — Commit and push updated model artifacts
-      # -----------------------------------------------------
-      # After training, the new model files are saved locally.
-      # This step commits them back to your GitHub repo so your
-      # Streamlit app always uses the latest model.
-      - name: Commit and push model artifacts
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git add data/models/*.pkl
-          git commit -m "Automated model update [skip ci]" || echo "No changes to commit"
-          git push
+      - name: Upload model artifacts
+        if: success()            # Only upload if the pipeline ran successfully
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-artifacts  # Name of the artifact bundle in GitHub Actions
+          path: |                # Folders to upload for download/inspection
+            data/models/
+            data/processed/
+            data/raw/
+

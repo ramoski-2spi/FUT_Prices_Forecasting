@@ -13,9 +13,10 @@ GitHub Actions will run this script automatically every day at 3 AM UTC.
 
 import pandas as pd
 from pathlib import Path
+import time
 
-# Import your pipeline functions
-from src.scraper import scrape_players, get_price_history
+# Import pipeline functions
+from src.scraper import PLAYERS, get_price_history
 from src.features import build_features
 from src.modeling import (train_model,compute_residual_std,)
 
@@ -38,20 +39,29 @@ def run_scraper():
     print("🔍 Running scraper...")
 
     # Get list of players to scrape
-    players = build_features()
+    players = PLAYERS
 
     # Scrape price history for each player
     all_data = []
-    for player in players:
-        df = get_price_history(player)
+    for player_id, slug in players.items():
+        df = get_price_history(player_id, slug)
         all_data.append(df)
+
+        if df is not None:
+            all_data.append(df)
+
+        time.sleep(4)  # avoid rate limiting
+
+    if not all_data:
+        print("No data scraped.")
+        return
 
     # Concatenate all scraped data
     full_df = pd.concat(all_data, ignore_index=True)
 
     # Save raw data
     RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
-    raw_path = RAW_DATA_DIR / "raw_prices.csv"
+    raw_path = RAW_DATA_DIR / "fut_prices_raw.csv"
     full_df.to_csv(raw_path, index=False)
 
     print(f"✅ Scraping complete. Saved raw data to {raw_path}")
@@ -67,7 +77,7 @@ def run_feature_builder():
     """
     print("🛠️ Building feature dataset...")
 
-    df = pd.read_csv(RAW_DATA_DIR / "raw_prices.csv")
+    df = pd.read_csv(RAW_DATA_DIR / "fut_prices_raw.csv")
     processed_df = build_features(df)  # your feature builder
 
     # Save processed dataset
@@ -108,7 +118,6 @@ def run_residual_std(model, splits):
     compute_residual_std(model, X_test, y_test)
 
     print(f"✅ Residual std saved to {DEFAULT_RESIDUAL_STD_PATH}")
-
 
 # ---------------------------------------------------------
 # MAIN PIPELINE
