@@ -2,7 +2,7 @@
 
 ![Pipeline Status](https://github.com/ramoski-2spi/FUT_Prices_Forecasting/actions/workflows/train_pipeline.yml/badge.svg)           
 
-[![Streamlit App](https://img.shields.io/badge/Streamlit-Live%20App-FF4B4B?logo=streamlit&logoColor=white)](https://your-app.streamlit.app)
+[![Streamlit App](https://img.shields.io/badge/Streamlit-Live%20App-FF4B4B?logo=streamlit&logoColor=white)](https://futpricesforecasting-jcbgfj8szw7uqdffatkzvb.streamlit.app/)
 
 A modular machine learning pipeline and Streamlit application for forecasting FIFA Ultimate Team (FUT) player prices using historical market data from **FUT.gg**.  
 This project demonstrates a real-world, production-style workflow: data ingestion, feature engineering, model training, evaluation, deployment, and CI automation.
@@ -157,7 +157,7 @@ It includes:
 ## How to Run the Project
 
 ### Try the Live App (No Installation Required)
-[![Streamlit App](https://img.shields.io/badge/Streamlit-Live%20App-FF4B4B?logo=streamlit&logoColor=white)](https://your-app.streamlit.app)
+[![Streamlit App](https://img.shields.io/badge/Streamlit-Live%20App-FF4B4B?logo=streamlit&logoColor=white)](https://futpricesforecasting-jcbgfj8szw7uqdffatkzvb.streamlit.app/)
 
 ### Run the Automated Pipeline in GitHub Actions (No Cloning Required)
 You can run the full ML pipeline directly from GitHub:
