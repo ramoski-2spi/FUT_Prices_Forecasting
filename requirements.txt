@@ -2,7 +2,7 @@ pandas
 numpy
 xgboost
 scikit-learn
-request
+requests
 streamlit
 plotly
 matplotlib
