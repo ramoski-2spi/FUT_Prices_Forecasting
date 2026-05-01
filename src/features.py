@@ -10,7 +10,7 @@ def build_features(df):
     df = df.copy()
 
     # Ensure proper types
-    df["date"] = pd.to_datetime(df["date"])
+    df["date"] = pd.to_datetime(df["date"]).dt.tz_localize(None)
     df["price"] = pd.to_numeric(df["price"], errors="coerce")
     df["log_price"] = np.log1p(df["price"])
     df["player_name"] = df["player_name"].astype(str)
@@ -41,6 +41,8 @@ def build_features(df):
 
     # Target: next day's price (per player)
     df["next_day_price"] = g["log_price"].shift(-1)
+
+    df["date"] = df["date"].dt.date
 
     # Drop rows with missing values
     df = df.dropna()

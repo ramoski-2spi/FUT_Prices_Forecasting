@@ -1,14 +1,12 @@
 """
-automation.py
-
 This script orchestrates the full daily ML pipeline:
 1. Scrape FUTBIN player price history
 2. Build processed feature dataset
 3. Train XGBoost model
 4. Compute residual_std for confidence intervals
-5. Save all artifacts into data/models/
+5. Save all trained models into data/models/
 
-GitHub Actions will run this script automatically every day at 3 AM UTC.
+GitHub Actions will run this script on demand.
 """
 
 import pandas as pd
@@ -18,23 +16,16 @@ import time
 # Import pipeline functions
 from src.scraper import PLAYERS, get_price_history
 from src.features import build_features
-from src.modeling import (train_model,compute_residual_std,)
-
-from src.config import (
-    RAW_DATA_DIR,
-    PROCESSED_DATA_DIR,
-    DEFAULT_MODEL_PATH,
-    DEFAULT_RESIDUAL_STD_PATH,
-)
-
+from src.modeling import train_model,compute_residual_std
+from src.config import RAW_DATA_DIR, PROCESSED_DATA_DIR, DEFAULT_MODEL_PATH, DEFAULT_RESIDUAL_STD_PATH
 
 # ---------------------------------------------------------
 # STEP 1 — SCRAPE FUTBIN DATA
 # ---------------------------------------------------------
 def run_scraper():
     """
-    Scrapes FUTBIN for all players defined in your filter list.
-    Saves raw CSVs into data/raw/.
+    Scrapes FUT.GG for all players defined in the filter list.
+    Saves raw CSV into data/raw/.
     """
     print("🔍 Running scraper...")
 
@@ -44,9 +35,7 @@ def run_scraper():
     # Scrape price history for each player
     all_data = []
     for player_id, slug in players.items():
-        df = get_price_history(player_id, slug)
-        all_data.append(df)
-
+        df = get_price_history(player_id, slug)       
         if df is not None:
             all_data.append(df)
 
@@ -66,7 +55,6 @@ def run_scraper():
 
     print(f"✅ Scraping complete. Saved raw data to {raw_path}")
 
-
 # ---------------------------------------------------------
 # STEP 2 — BUILD PROCESSED FEATURE DATASET
 # ---------------------------------------------------------
@@ -82,10 +70,10 @@ def run_feature_builder():
 
     # Save processed dataset
     PROCESSED_DATA_DIR.parent.mkdir(parents=True, exist_ok=True)
-    processed_df.to_csv(PROCESSED_DATA_DIR, index=False)
+    processed_path = PROCESSED_DATA_DIR/"fut_prices_features.csv"
+    processed_df.to_csv(processed_path, index=False)
 
-    print(f"✅ Feature dataset saved to {PROCESSED_DATA_DIR}")
-
+    print(f"✅ Feature dataset saved to {processed_path}")
 
 # ---------------------------------------------------------
 # STEP 3 — TRAIN MODEL
@@ -97,12 +85,11 @@ def run_training():
     """
     print("🤖 Training model...")
 
-    df = pd.read_csv(PROCESSED_DATA_DIR)
+    df = pd.read_csv(PROCESSED_DATA_DIR/"fut_prices_features.csv")
     model, splits = train_model(df)
 
     print(f"✅ Model saved to {DEFAULT_MODEL_PATH}")
     return model, splits
-
 
 # ---------------------------------------------------------
 # STEP 4 — COMPUTE RESIDUAL STD
@@ -130,8 +117,7 @@ def main():
     model, splits = run_training()
     run_residual_std(model, splits)
 
-    print("\n🎉 Pipeline complete! All artifacts updated.\n")
-
+    print("\n🎉 Pipeline complete!\n")
 
 if __name__ == "__main__":
     main()

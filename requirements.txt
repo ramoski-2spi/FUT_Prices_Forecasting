@@ -2,10 +2,8 @@ pandas
 numpy
 xgboost
 scikit-learn
-requests
-beautifulsoup4
+request
 streamlit
 plotly
-python-dotenv
 matplotlib
 seaborn
