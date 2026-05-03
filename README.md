@@ -67,8 +67,7 @@ FUT-PRICE-FORECASTING/
 │   ├── scraper.py                       # FUT.gg scraping logic
 │   ├── features.py                      # Feature engineering utilities
 │   ├── modeling.py                      # Model training + residual std computation
-│   ├── config.py                        # Paths and constants
-│   └── predict.py                       # Prediction utilities for Streamlit
+│   └── config.py                        # Paths and constants
 │
 ├── automation.py                        # Full pipeline orchestrator (scrape → features → train)
 ├── streamlit_app.py                     # Deployed Streamlit web UI
