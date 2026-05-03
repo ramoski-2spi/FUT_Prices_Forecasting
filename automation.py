@@ -51,7 +51,8 @@ def run_scraper():
     # Save raw data
     RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
     raw_path = RAW_DATA_DIR / "fut_prices_raw.csv"
-    full_df.to_csv(raw_path, index=False)
+    full_df.to_csv(raw_path, mode="a", header=not raw_path.exists(), index=False)
+
 
     print(f"✅ Scraping complete. Saved raw data to {raw_path}")
 
