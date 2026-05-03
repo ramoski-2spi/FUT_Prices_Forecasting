@@ -60,8 +60,8 @@ This demonstrates how machine learning can support decision-making in fast-movin
 FUT-PRICE-FORECASTING/
 ├── notebooks/
 │   ├── 01_EDA.ipynb                     # Exploratory Data Analysis (EDA)
-│   ├── 02_features.ipynb     # Feature engineering + dataset construction
-│   ├── 03_XGBoost_model.ipynb          # Model training, evaluation, residual analysis
+│   ├── 02_features.ipynb                # Feature engineering + dataset construction
+│   ├── 03_XGBoost_model.ipynb           # Model training, evaluation, residual analysis
 │
 ├── src/
 │   ├── scraper.py                       # FUT.gg scraping logic
