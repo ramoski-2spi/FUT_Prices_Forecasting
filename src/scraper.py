@@ -10,17 +10,8 @@ PLAYERS = {"100914866": "rayan-cherki",
 def get_price_history(player_id, slug):
     url = f"https://www.fut.gg/api/fut/player-prices/26/{player_id}/"
     
-    headers = {"User-Agent": ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                                        "AppleWebKit/537.36 (KHTML, like Gecko) "
-                                        "Chrome/123.0.0.0 Safari/537.36"),
-                                        "Accept": "application/json, text/plain, */*",
-                                        "Accept-Language": "en-US,en;q=0.9",
-                                        "Referer": f"https://www.fut.gg/players/{player_id}-{slug}/",
-                                        "Origin": "https://www.fut.gg",
-                                        "Connection": "keep-alive",}
-
-    #{"User-Agent": "Mozilla/5.0",
-               #"Accept": "application/json"}
+    headers = {"User-Agent": "Mozilla/5.0",
+               "Accept": "application/json"}
     
     response = requests.get(url, headers=headers)
     
